@@ -1302,114 +1302,123 @@
                     </div>
                     <script>
                       function validateEmail(email) {
-                        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                        return re.test(email);
-                      }
-                      document.getElementById('contactForm').addEventListener('submit', function (e) {
-                        e.preventDefault(); // Prevent default form submission
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+}
 
-                        const form = this;
-                        const captchaError = document.getElementById('captchaError');
-                        captchaError.classList.add('d-none');
+document.getElementById('contactForm').addEventListener('submit', async function (e) {
+  e.preventDefault(); // Prevent default form submission
 
-                        let isValid = true;
+  const form = this;
+  const captchaError = document.getElementById('captchaError');
+  captchaError.classList.add('d-none');
 
-                        const fullname = document.getElementById('fullname');
-                        const email = document.getElementById('email-sales');
-                        const querytype = document.getElementById('Querytype');
-                        const mobile = document.getElementById('mobile');
-                        const message = document.getElementById('message');
+  let isValid = true;
 
-                        // Reset previous invalid states
-                        [fullname, email, querytype, mobile, message].forEach(field => {
-                          field.classList.remove('is-invalid');
-                        });
+  const fullname = document.getElementById('fullname');
+  const email = document.getElementById('email-sales');
+  const querytype = document.getElementById('Querytype');
+  const mobile = document.getElementById('mobile');
+  const message = document.getElementById('message');
 
-                        // Fullname check
-                        if (fullname.value.trim() === '') {
-                          fullname.classList.add('is-invalid');
-                          isValid = false;
-                        }
+  // Reset previous invalid states
+  [fullname, email, querytype, mobile, message].forEach(field => {
+    field.classList.remove('is-invalid');
+  });
 
-                        // Email check
-                        if (!validateEmail(email.value.trim())) {
-                          email.classList.add('is-invalid');
-                          isValid = false;
-                        }
+  // Fullname check
+  if (fullname.value.trim() === '') {
+    fullname.classList.add('is-invalid');
+    isValid = false;
+  }
 
-                        // Query type check
-                        if (querytype.value.trim() === '') {
-                          querytype.classList.add('is-invalid');
-                          isValid = false;
-                        }
+  // Email check
+  if (!validateEmail(email.value.trim())) {
+    email.classList.add('is-invalid');
+    isValid = false;
+  }
 
-                        // Optional: Mobile validation (e.g., check if it’s numeric or 10 digits)
-                        if (mobile.value.trim() === '') {
-                          mobile.classList.add('is-invalid');
-                          isValid = false;
-                        }
+  // Query type check
+  if (querytype.value.trim() === '') {
+    querytype.classList.add('is-invalid');
+    isValid = false;
+  }
 
-                        // Message check
-                        if (message.value.trim() === '') {
-                          message.classList.add('is-invalid');
-                          isValid = false;
-                        }
+  // Mobile validation
+  if (mobile.value.trim() === '') {
+    mobile.classList.add('is-invalid');
+    isValid = false;
+  }
 
-                        // Show invalid messages and prevent submission if not valid
-                        if (!isValid) {
-                          form.classList.add('was-validated');
-                          return;
-                        }
+  // Message check
+  if (message.value.trim() === '') {
+    message.classList.add('is-invalid');
+    isValid = false;
+  }
 
-                        // Validate reCAPTCHA
-                        const widgetId = renderedRecaptchas['recaptcha_sales_inquiry'];
-                        let recaptchaResponseSales = widgetId !== undefined ? grecaptcha.getResponse(widgetId) : '';
-                        const recaptchaContainerSales = document.getElementById('recaptcha_sales_inquiry');
+  // Show invalid messages and prevent submission if not valid
+  if (!isValid) {
+    form.classList.add('was-validated');
+    return;
+  }
 
-                        if (!recaptchaResponseSales) {
-                          if (recaptchaContainerSales) {
-                            recaptchaContainerSales.style.border = '1px solid #dc3545';
-                            recaptchaContainerSales.style.borderRadius = '0.25rem';
-                            if (captchaError) captchaError.classList.remove('d-none');
-                          }
-                          return;
-                        } else {
-                          if (recaptchaContainerSales) {
-                            recaptchaContainerSales.style.border = 'none';
-                          }
-                          if (captchaError) {
-                            captchaError.classList.add('d-none'); // Hide error if captcha is valid
-                          }
-                        }
+  // Validate reCAPTCHA
+  const widgetId = renderedRecaptchas['recaptcha_sales_inquiry'];
+  let recaptchaResponseSales = widgetId !== undefined ? grecaptcha.getResponse(widgetId) : '';
+  const recaptchaContainerSales = document.getElementById('recaptcha_sales_inquiry');
 
-                        // Send email via EmailJS
-                        const templateParamsSales = {
-                          to_name: email.value,
-                          from_name: fullname.value,
-                          from_email: email.value,
-                          reply_to: "no-reply@miphisemi.com",
-                          query_type: querytype.value,
-                          from_mobile: mobile.value,
-                          message: message.value
-                        };
-                        emailjs.init({ publicKey: "1U3Z0zkZ8AUjqnnVp" });
-                        emailjs.send('service_viib887', 'template_3hphd4a', templateParamsSales)
-                          .then(
-                            function (response) {
-                              alert('Message sent successfully!');
-                              form.reset();
-                              form.classList.remove('was-validated');
-                              if (widgetId !== undefined) grecaptcha.reset(widgetId);
-                              if (recaptchaContainerSales) recaptchaContainerSales.style.border = 'none';
-                            },
-                            function (error) {
-                              console.error('FAILED...', error);
-                              alert('Failed to send message. Please try again.');
-                              if (widgetId !== undefined) grecaptcha.reset(widgetId);
-                            }
-                          );
-                      });
+  if (!recaptchaResponseSales) {
+    if (recaptchaContainerSales) {
+      recaptchaContainerSales.style.border = '1px solid #dc3545';
+      recaptchaContainerSales.style.borderRadius = '0.25rem';
+      if (captchaError) captchaError.classList.remove('d-none');
+    }
+    return;
+  } else {
+    if (recaptchaContainerSales) {
+      recaptchaContainerSales.style.border = 'none';
+    }
+    if (captchaError) {
+      captchaError.classList.add('d-none');
+    }
+  }
 
+  // Send data to backend
+  const payload = {
+    to_name: email.value,
+    from_name: fullname.value,
+    from_email: email.value,
+    query_type: querytype.value,
+    from_mobile: mobile.value,
+    message: message.value,
+    recaptcha: recaptchaResponseSales, // Optional: Include for backend verification
+  };
+
+  try {
+    const response = await fetch('https://your-backend-domain.vercel.app/api/send-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      alert('Message sent successfully!');
+      form.reset();
+      form.classList.remove('was-validated');
+      if (widgetId !== undefined) grecaptcha.reset(widgetId);
+      if (recaptchaContainerSales) recaptchaContainerSales.style.border = 'none';
+    } else {
+      throw new Error(result.error || 'Failed to send message');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Failed to send message. Please try again.');
+    if (widgetId !== undefined) grecaptcha.reset(widgetId);
+  }
+});
 
                     </script>
 
