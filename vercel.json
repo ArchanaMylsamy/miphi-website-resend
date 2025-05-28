@@ -1,0 +1,61 @@
+{
+    "redirects": [
+      {
+        "source": "/about-us",
+        "destination": "/pages/about.html",
+        "permanent": true
+      },
+      {
+        "source": "/solutions/consumer-ssd",
+        "destination": "/pages/consumer.html",
+        "permanent": true
+      },
+      {
+        "source": "/solutions",
+        "destination": "/pages/product.html",
+        "permanent": true
+      },
+      {
+        "source": "/contact-us",
+        "destination": "/pages/contact.html",
+        "permanent": true
+      },
+      {
+        "source": "/solutions/enterprise-ssd",
+        "destination": "/pages/enterprise.html",
+        "permanent": true
+      },
+      {
+        "source": "/solutions/ufs",
+        "destination": "/pages/ufs.html",
+        "permanent": true
+      },
+      {
+        "source": "/solutions/memory-cards",
+        "destination": "/pages/memory.html",
+        "permanent": true
+      },
+      {
+        "source": "/terms-and-conditions",
+        "destination": "/pages/terms.html",
+        "permanent": true
+      },
+      {
+        "source": "/solutions/usb",
+        "destination": "/pages/usb.html",
+        "permanent": true
+      },
+      {
+        "source": "/solutions/emmc",
+        "destination": "/pages/emmc.html",
+        "permanent": true
+      },
+      {
+        "source": "/risk-management",
+        "destination": "/pages/risk.html",
+        "permanent": true
+      }
+      
+    ]
+  }
+  
