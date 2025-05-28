@@ -372,54 +372,89 @@
     </section>
  
     <script>
-          function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
-          }
-          document.getElementById('contactForm').addEventListener('submit', function(e) {
-          e.preventDefault(); // Prevent default form submission
-          
-          let fullname = document.getElementById('fullname').value.trim();
-          let email = document.getElementById('email').value.trim();
-          let querytype = document.getElementById('Querytype').value.trim();
-          let mobile = document.getElementById('mobile').value.trim();
-          let message = document.getElementById('message').value.trim();
-          // Validate email format
-          if (!validateEmail(email)) {
-            alert('Please enter a valid email address.');
-            return;
-          }
-          // Validate reCAPTCHA response
-          let recaptchaResponse = grecaptcha.getResponse();
-          if (!recaptchaResponse) {
-            alert('Please complete the reCAPTCHA.');
-            return;
-          }
-          // Send data using EmailJS with updated template
+         function validateEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+}
 
-          
-            const templateParamsSales = {
-                          to_name: email.value,
-                          from_name: fullname.value,
-                          from_email: email.value,
-                          reply_to: "no-reply@miphisemi.com",
-                          query_type: querytype.value,
-                          from_mobile: mobile.value,
-                          message: message.value
-                        };
-                        emailjs.init({ publicKey: "1U3Z0zkZ8AUjqnnVp" });
-                        emailjs.send('service_viib887', 'template_3hphd4a', templateParamsSales)
-                          .then(
-            function(response) {
-              console.log('Success!', response);
-              alert('Message sent successfully!');
-            },
-            function(error) {
-              console.error('Failed...', error);
-              alert('Failed to send message. Please try again.');
-            }
-          );
-        });
+document.getElementById('contactForm').addEventListener('submit', async function (e) {
+  e.preventDefault(); // Prevent default form submission
+
+  // Get form values
+  let fullname = document.getElementById('fullname').value.trim();
+  let email = document.getElementById('email-sales').value.trim(); // Updated ID to match your HTML
+  let querytype = document.getElementById('Querytype').value.trim();
+  let mobile = document.getElementById('mobile').value.trim();
+  let message = document.getElementById('message').value.trim();
+
+  // Validate form fields
+  if (fullname === '') {
+    alert('Please enter your full name.');
+    return;
+  }
+
+  if (!validateEmail(email)) {
+    alert('Please enter a valid email address.');
+    return;
+  }
+
+  if (querytype === '') {
+    alert('Please select a query type.');
+    return;
+  }
+
+  if (mobile === '') {
+    alert('Please enter a valid mobile number.');
+    return;
+  }
+
+  if (message === '') {
+    alert('Please enter a message.');
+    return;
+  }
+
+  // Validate reCAPTCHA response
+  let recaptchaResponse = grecaptcha.getResponse();
+  if (!recaptchaResponse) {
+    alert('Please complete the reCAPTCHA.');
+    return;
+  }
+
+  // Prepare payload for backend
+  const payload = {
+    to_name: email, // Adjust as needed
+    from_name: fullname,
+    from_email: email,
+    query_type: querytype,
+    from_mobile: mobile,
+    message: message,
+    recaptcha: recaptchaResponse // Include for backend verification
+  };
+
+  try {
+    const response = await fetch('https://miphi-application-resend.vercel.app/api/send-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      console.log('Success!', result);
+      alert('Message sent successfully!');
+      document.getElementById('contactForm').reset(); // Reset form
+      grecaptcha.reset(); // Reset reCAPTCHA
+    } else {
+      throw new Error(result.error || 'Failed to send message');
+    }
+  } catch (error) {
+    console.error('Failed...', error);
+    alert('Failed to send message. Please try again.');
+    grecaptcha.reset();
+  }
+});
 
     </script>
    
